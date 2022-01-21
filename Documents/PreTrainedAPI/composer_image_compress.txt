@@ -1,0 +1,63 @@
+import airflow
+from airflow import DAG
+from airflow.operators.bash_operator import BashOperator
+from airflow.operators import PythonOperator
+from datetime import timedelta
+from airflow.models import Variable
+import datetime
+datetime_obj = datetime.datetime
+
+
+current_datetime = str(datetime_obj.now())
+formatted_date = current_datetime.split(" ")[0]
+
+
+default_args = {
+    'start_date': airflow.utils.dates.days_ago(0),
+    'retries': 1,
+    'retry_delay': timedelta(minutes=5)
+}
+
+dag = DAG(
+    'image_processing',
+    default_args=default_args,
+    description='liveness monitoring dag',
+    schedule_interval=None,
+    dagrun_timeout=timedelta(minutes=20))
+
+
+
+import tensorflow.compat.v1 as tf
+from google.cloud import storage
+
+
+
+
+def resize_image_gcs():
+    client = storage.Client()
+    file_list=[]
+    for blob in client.list_blobs('ml_usecase_3', prefix='validation'):
+        file_name = str(blob.name)
+        if file_name != "validation/":
+            data = "gs://ml_usecase_3/{}".format(file_name)
+            file_list.append(data)
+    for image_path in file_list: 
+        image = tf.read_file(str(image_path))
+        image = tf.image.decode_jpeg(image)
+        resize_image = tf.image.resize(image, [224, 224])
+        image_array = sess.run(resize_image)
+        image = tf.image.encode_jpeg(image_array)
+        image_path = image_path.replace("validation/","validation/resized/")
+        write_op = tf.write_file(image_path, image)
+        sess.run(write_op)
+
+
+#with DAG('Image_processing_dag', description='Image_processing_dag DAG', schedule_interval='*/5 * * * *', start_date=datetime(2018, 11, 1), catchup=False) as dag:
+start = BashOperator(
+    task_id='start',
+    bash_command='echo test',
+    dag=dag,
+    depends_on_past=False,
+    priority_weight=2**31-1)
+python_task = PythonOperator(task_id='python_task', python_callable=resize_image_gcs,dag=dag)
+start >> python_task

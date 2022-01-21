@@ -1,0 +1,5 @@
+#based on file type calling respective functions
+if i_file !='' and m_file != '' and i_file.split('.')[-1] =='json' :
+    read_json_file(i_file,m_file, parent_dir, o_location)
+
+How is read_json is called

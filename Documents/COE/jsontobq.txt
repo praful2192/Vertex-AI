@@ -1,0 +1,22 @@
+json_to_bq_load_command = """ gsutil cp gs://coe-buckt/schema/*schema.json .;gsutil cp gs://coe-buckt/scripts/json_to_bq.py .; python3 json_to_bq.py --project day0-data-lab-01 --output_table day0-data-lab-01:coe_dataset.jsontest1 --error_table day0-data-lab-01:coe_dataset.jsontest1_error_records --temp_location gs://coe-buckt/temp --region us-central1 --input_path 'gs://coe-buckt/source_data/text*' --runner Dataflow Runner;"""
+
+dataflow_json_to_bq_bash = BashOperator(
+                            task_id = "dataflow_json_to_bq_bash",
+                            bash_command =  json_to_bq_load_command,
+                            dag = dag,
+                            )
+    
+dataflow_json_to_bq_bash
+
+
+vinnet kumar
+
+gsutil -m cp gs://coe-buckt/schema/*schema.json .;gsutil -m cp gs://coe-buckt/source_data/sample.xlsx .;gsutil -m cp gs://coe-buckt/scripts/xlsx_to_bq.py .;
+
+python3 xlsx_to_bq.py --project day0-data-lab-01 --output_table day0-data-lab-01:coe_dataset.batch_text2bq_xlsx --error_table day0-data-lab-01:coe_dataset.batch_text2bq_xlsx_error_records --temp_location gs://coe-buckt/temp --region us-central1 --input_path gs://coe_vikash/sample.xlsx --sheet source_data_samplecsv --pubsub_topic 'coe-pubsub-topic' --pubsub_error_topic 'coe-topic' --output_gcs_path gs://coe-buckt/output/processed/csv_data/ --error_gcs_path gs://coe-buckt/output/error/csv_data/ --runner DataflowRunner
+
+
+------------------------------------------------------
+
+
+gsutil -m cp gs://coe-buckt/source_data/orders.xml .;gsutil -m cp gs://coe-buckt/scripts/xlsx_to_bq.py .;python3 xml_to_bq.py --project day0-data-lab-01 --output_table day0-data-lab-01:coe_dataset.xmltest1 --error_table day0-data-lab-01:coe_dataset.xmltest1_error_records --temp_location gs://coe-buckt/temp --region us-central1 --input_path 'gs://coe-buckt/source_data/orders.xml' --xml_root catalog,book

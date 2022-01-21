@@ -1,0 +1,23 @@
+python3 json_to_bq.py --project day0-data-lab-01 --output_table day0-data-lab-01:coe_dataset.jsontest1 --error_table day0-data-lab-01:coe_dataset.jsontest1_error_records --temp_location gs://coe-buckt/temp --region us-central1 --input_path 'gs://coe-buckt/source_data/text*'
+
+gsutil cp gs://coe_archive/text2.json gs://coe-buckt/source_data
+
+id:STRING,val :STRING,float_val:STRING,flag:STRING,process_time:STRING,optional_fields:STRING,uuid:STRING,ingest_time:STRING
+
+TAS_RP_INSERT_DATE:TIMESTAMP,TAS_RP_CHANGE_DATE:TIMESTAMP,TAS_RP_OPCODE:STRING,TAS_RP_CYCLEID:INT64,TAS_RP_COMMIT_SCN:NUMERIC,CURRKEY:STRING,CURRDEC:INT64,col1:STRING
+
+gsutil cp text2.json gs://coe-buckt/source_data/text*
+
+gsutil cp gs://coe-buckt/schema/error_schema.json .
+
+gsutil cp gs://coe-buckt/schema/table_schema.json .
+
+gsutil cp gs://coe-buckt/scripts/json_to_bq.py .
+
+gsutil cp gs://coe_archive/text2.json gs://coe-buckt/source_data
+
+gsutil cp text2.json gs://coe-buckt/source_data
+
+
+
+python3 json_to_bq.py --project day0-data-lab-01 --output_table day0-data-lab-01:coe_dataset.jsontest1 --error_table day0-data-lab-01:coe_dataset.jsontest1_error_records --temp_location gs://coe-buckt/temp --region us-central1 --input_path 'gs://coe-buckt/source_data/text*' --runner DataflowRunner
